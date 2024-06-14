@@ -1,0 +1,17 @@
+push 23
+push 34
+add
+push 45
+add
+push 56
+add
+push 67
+add
+push 78
+add
+push 89
+add
+push 90
+add
+
+print

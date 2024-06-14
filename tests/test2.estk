@@ -1,0 +1,11 @@
+push 1
+jmp @loop
+print
+exit
+
+loop:
+  push 1
+  add
+  cmp 10
+  jne @loop
+  ret

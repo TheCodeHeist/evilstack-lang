@@ -1,0 +1,14 @@
+push "Enter first number:"
+print
+read
+atoi
+
+push "Enter second number:"
+print
+read
+atoi
+
+add
+push "Sum:"
+print
+print

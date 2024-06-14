@@ -1,0 +1,46 @@
+; Guessing Game
+
+push "Welcome to the guessing game!"
+print
+jmp @randomize
+jmp @game
+
+randomize:
+  push 10
+  push 1
+  sub
+  rand
+  mul
+  push 1
+  add
+  push 1
+  idiv
+  ret
+
+game:
+  push "Enter a number between 1 and 10: "
+  print
+  read
+  atoi
+  scmp
+  jeq @win
+  jlt @low
+  jgt @high
+
+win:
+  push "Congratulations! You guessed the number!"
+  print
+  exit
+
+low:
+  push "Too low! Try again."
+  print
+  pop
+  jmp @game
+
+high:
+  push "Too high! Try again."
+  print
+  pop
+  jmp @game
+  

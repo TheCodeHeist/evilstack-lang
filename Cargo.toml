@@ -1,0 +1,15 @@
+[package]
+name = "evilstack_lang"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rand = "0.8.5"
+colored = "2.1.0"
+# regex = "1.10.5"
+
+[[bin]]
+name = "estack-vm"
+path = "src/vm/main.rs"
