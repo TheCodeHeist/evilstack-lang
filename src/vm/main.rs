@@ -1,5 +1,5 @@
 pub mod error;
-pub mod stackfk_vm;
+pub mod evilstack_vm;
 pub mod tokenizer;
 
 use std::env::{self, current_dir};
@@ -30,6 +30,6 @@ fn main() {
     //     println!("{:?}", symbol);
     // }
 
-    let mut runtime = stackfk_vm::StackFkVM::new(symbols);
+    let mut runtime = evilstack_vm::EvilStackVM::new(symbols);
     runtime.execute();
 }

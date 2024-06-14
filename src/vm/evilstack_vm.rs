@@ -71,7 +71,7 @@ pub struct Flags {
     pub less_than_or_equal: bool,
 }
 
-pub struct StackFkVM {
+pub struct EvilStackVM {
     stack: Vec<ConstType>,
     ip: usize,
     symbols: Vec<Symbol>,
@@ -81,9 +81,9 @@ pub struct StackFkVM {
     return_stack: Vec<usize>,
 }
 
-impl StackFkVM {
-    pub fn new(symbols: Vec<Symbol>) -> StackFkVM {
-        StackFkVM {
+impl EvilStackVM {
+    pub fn new(symbols: Vec<Symbol>) -> EvilStackVM {
+        EvilStackVM {
             stack: Vec::new(),
             ip: 0,
             symbols,
