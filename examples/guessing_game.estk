@@ -1,6 +1,6 @@
 ; Guessing Game
 
-push "Welcome to the guessing game!"
+push "Welcome to the guessing game!\n\n"
 print
 jmp @randomize
 jmp @game
@@ -28,18 +28,18 @@ game:
   jgt @high
 
 win:
-  push "Congratulations! You guessed the number!"
+  push "Congratulations! You guessed the number!\n" 
   print
   exit
 
 low:
-  push "Too low! Try again."
+  push "Too low! Try again.\n"
   print
   pop
   jmp @game
 
 high:
-  push "Too high! Try again."
+  push "Too high! Try again.\n"
   print
   pop
   jmp @game

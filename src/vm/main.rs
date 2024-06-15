@@ -22,6 +22,11 @@ fn main() {
     file.read_to_string(&mut contents)
         .expect("Failed to read file");
 
+    if contents.is_empty() {
+        writeln!(io::stderr(), "File is empty").unwrap();
+        std::process::exit(1);
+    }
+
     let mut tokenizer = tokenizer::Tokenizer::new();
     tokenizer.tokenize(&contents);
 

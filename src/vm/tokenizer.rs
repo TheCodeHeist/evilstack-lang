@@ -100,7 +100,7 @@ impl Tokenizer {
                             format!("{}:{}", self.line_number, self.column_number),
                         )
                         .print();
-                        return;
+                        std::process::exit(1);
                     }
                 },
                 '"' => {
@@ -156,7 +156,7 @@ impl Tokenizer {
                                         format!("{}:{}", self.line_number, self.column_number),
                                     )
                                     .print();
-                                    return;
+                                    std::process::exit(1);
                                 }
 
                                 curr_token.push(c);

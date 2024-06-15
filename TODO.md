@@ -27,8 +27,8 @@
 ### Data Manipulation
 
 - [x] `atoi` - Converts the top string value from the stack to an integer
-- [ ] `itoa` - Converts the top integer value from the stack to a character
-- [ ] `itof` - Converts the top integer value from the stack to a float
+- [x] `itoa` - Converts the top integer value from the stack to a character
+- [x] `itof` - Converts the top integer value from the stack to a float
 - [x] `ftoi` - Converts the top float value from the stack to an integer
 
 ### Flow Control
@@ -48,9 +48,11 @@
 ### I/O
 
 - [x] `print` - Prints the top value from the stack
+- [x] Escape characters
 - [x] `read` - Reads a value from the input and pushes it to the stack
 
 ### Built-in Functions
 
 - [x] `rand` - Pushes a random number to the stack
-- [ ] `time` - Pushes the current time to the stack
+- [x] `time` - Pushes the current time to the stack
+

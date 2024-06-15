@@ -3,7 +3,8 @@ use crate::{
     tokenizer::{Symbol, SymbolType},
 };
 use rand::Rng;
-use std::{collections::HashMap, io};
+use std::collections::HashMap;
+use std::io::{self, Write};
 
 #[derive(Debug, Clone)]
 enum ConstType {
@@ -142,7 +143,7 @@ impl EvilStackVM {
                     if self.stack.is_empty() {
                         // panic!("Cannot pop from an empty stack");
                         Error::new("Cannot pop from an empty stack", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
                     self.stack.pop();
                 }
@@ -150,7 +151,7 @@ impl EvilStackVM {
                     if self.stack.is_empty() {
                         // panic!("Cannot duplicate from an empty stack");
                         Error::new("Cannot duplicate from an empty stack", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let value = self.stack.pop().unwrap();
@@ -161,7 +162,7 @@ impl EvilStackVM {
                     if self.stack.len() < 2 {
                         // panic!("Not enough operands for SWAP instruction");
                         Error::new("Not enough operands for SWAP instruction", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let a = self.stack.pop().unwrap();
@@ -174,7 +175,7 @@ impl EvilStackVM {
                     if self.stack.len() < 2 {
                         // panic!("Not enough operands for ADD instruction");
                         Error::new("Not enough operands for ADD instruction", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let a = self.stack.pop().unwrap();
@@ -196,10 +197,11 @@ impl EvilStackVM {
                         (ConstType::String(a), ConstType::String(b)) => {
                             self.stack.push(ConstType::String(b + &a));
                         }
+
                         _ => {
                             // panic!("Type mismatch for ADD instruction");
                             Error::new("Type mismatch for ADD instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -207,7 +209,7 @@ impl EvilStackVM {
                     if self.stack.len() < 2 {
                         // panic!("Not enough operands for SUB instruction");
                         Error::new("Not enough operands for SUB instruction", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let a = self.stack.pop().unwrap();
@@ -229,7 +231,7 @@ impl EvilStackVM {
                         _ => {
                             // panic!("Type mismatch for SUB instruction");
                             Error::new("Type mismatch for SUB instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -237,7 +239,7 @@ impl EvilStackVM {
                     if self.stack.len() < 2 {
                         // panic!("Not enough operands for MUL instruction");
                         Error::new("Not enough operands for MUL instruction", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let a = self.stack.pop().unwrap();
@@ -259,7 +261,7 @@ impl EvilStackVM {
                         _ => {
                             // panic!("Type mismatch for MUL instruction");
                             Error::new("Type mismatch for MUL instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -267,7 +269,7 @@ impl EvilStackVM {
                     if self.stack.len() < 2 {
                         // panic!("Not enough operands for DIV instruction");
                         Error::new("Not enough operands for DIV instruction", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let a = self.stack.pop().unwrap();
@@ -289,7 +291,7 @@ impl EvilStackVM {
                         _ => {
                             // panic!("Type mismatch for DIV instruction");
                             Error::new("Type mismatch for DIV instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -297,7 +299,7 @@ impl EvilStackVM {
                     if self.stack.len() < 2 {
                         // panic!("Not enough operands for IDIV instruction");
                         Error::new("Not enough operands for IDIV instruction", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let a = self.stack.pop().unwrap();
@@ -319,7 +321,7 @@ impl EvilStackVM {
                         _ => {
                             // panic!("Type mismatch for IDIV instruction");
                             Error::new("Type mismatch for IDIV instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -327,7 +329,7 @@ impl EvilStackVM {
                     if self.stack.len() < 2 {
                         // panic!("Not enough operands for MOD instruction");
                         Error::new("Not enough operands for MOD instruction", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let a = self.stack.pop().unwrap();
@@ -349,7 +351,7 @@ impl EvilStackVM {
                         _ => {
                             // panic!("Type mismatch for MOD instruction");
                             Error::new("Type mismatch for MOD instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -357,21 +359,22 @@ impl EvilStackVM {
                     if self.stack.is_empty() {
                         // panic!("Cannot print from an empty stack");
                         Error::new("Cannot print from an empty stack", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let value = self.stack.pop().unwrap();
                     match value {
                         ConstType::Integer(i) => {
-                            println!("{}", i);
+                            print!("{}", i);
                         }
                         ConstType::Float(f) => {
-                            println!("{}", f);
+                            print!("{}", f);
                         }
                         ConstType::String(s) => {
-                            println!("{}", s);
+                            print!("{}", s);
                         }
                     }
+                    io::stdout().flush().unwrap();
                 }
                 Instruction::Read(ref pos) => {
                     let mut input = String::new();
@@ -382,7 +385,7 @@ impl EvilStackVM {
                         Err(_) => {
                             // panic!("Failed to read input");
                             Error::new("Failed to read input", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -390,7 +393,7 @@ impl EvilStackVM {
                     if self.stack.is_empty() {
                         // panic!("Cannot convert emptiness to an integer!");
                         Error::new("Cannot convert emptiness to an integer!", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let value = self.stack.pop().unwrap();
@@ -402,13 +405,51 @@ impl EvilStackVM {
                             Err(_) => {
                                 // panic!("Invalid integer: {}", s);
                                 Error::new(&format!("Invalid integer: {}", s), pos.clone()).print();
-                                return;
+                                std::process::exit(1);
                             }
                         },
                         _ => {
                             // panic!("Type mismatch for ATOI instruction");
                             Error::new("Type mismatch for ATOI instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
+                        }
+                    }
+                }
+                Instruction::IToA(ref pos) => {
+                    if self.stack.is_empty() {
+                        // panic!("Cannot convert emptiness to a string!");
+                        Error::new("Cannot convert emptiness to a string!", pos.clone()).print();
+                        std::process::exit(1);
+                    }
+
+                    let value = self.stack.pop().unwrap();
+                    match value {
+                        ConstType::Integer(i) => {
+                            self.stack.push(ConstType::String(i.to_string()));
+                        }
+                        _ => {
+                            // panic!("Type mismatch for ITOA instruction");
+                            Error::new("Type mismatch for ITOA instruction", pos.clone()).print();
+                            std::process::exit(1);
+                        }
+                    }
+                }
+                Instruction::IToF(ref pos) => {
+                    if self.stack.is_empty() {
+                        // panic!("Cannot convert emptiness to a float!");
+                        Error::new("Cannot convert emptiness to a float!", pos.clone()).print();
+                        std::process::exit(1);
+                    }
+
+                    let value = self.stack.pop().unwrap();
+                    match value {
+                        ConstType::Integer(i) => {
+                            self.stack.push(ConstType::Float(i as f32));
+                        }
+                        _ => {
+                            // panic!("Type mismatch for ITOF instruction");
+                            Error::new("Type mismatch for ITOF instruction", pos.clone()).print();
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -416,7 +457,7 @@ impl EvilStackVM {
                     if self.stack.is_empty() {
                         // panic!("Cannot convert emptiness to an integer!");
                         Error::new("Cannot convert emptiness to an integer!", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let value = self.stack.pop().unwrap();
@@ -427,7 +468,7 @@ impl EvilStackVM {
                         _ => {
                             // panic!("Type mismatch for FTOI instruction");
                             Error::new("Type mismatch for FTOI instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -439,7 +480,7 @@ impl EvilStackVM {
                     None => {
                         // panic!("Unknown label: {}", label);
                         Error::new(&format!("Unknown label: {}", label), pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
                 },
                 Instruction::JumpEq(ref label, ref pos) => {
@@ -468,7 +509,7 @@ impl EvilStackVM {
                                 // panic!("Unknown label: {}", label);
                                 Error::new(&format!("Unknown label: {}", label), pos.clone())
                                     .print();
-                                return;
+                                std::process::exit(1);
                             }
                         }
                     }
@@ -484,7 +525,7 @@ impl EvilStackVM {
                                 // panic!("Unknown label: {}", label);
                                 Error::new(&format!("Unknown label: {}", label), pos.clone())
                                     .print();
-                                return;
+                                std::process::exit(1);
                             }
                         }
                     }
@@ -500,7 +541,7 @@ impl EvilStackVM {
                                 // panic!("Unknown label: {}", label);
                                 Error::new(&format!("Unknown label: {}", label), pos.clone())
                                     .print();
-                                return;
+                                std::process::exit(1);
                             }
                         }
                     }
@@ -516,7 +557,7 @@ impl EvilStackVM {
                                 // panic!("Unknown label: {}", label);
                                 Error::new(&format!("Unknown label: {}", label), pos.clone())
                                     .print();
-                                return;
+                                std::process::exit(1);
                             }
                         }
                     }
@@ -532,7 +573,7 @@ impl EvilStackVM {
                                 // panic!("Unknown label: {}", label);
                                 Error::new(&format!("Unknown label: {}", label), pos.clone())
                                     .print();
-                                return;
+                                std::process::exit(1);
                             }
                         }
                     }
@@ -548,7 +589,7 @@ impl EvilStackVM {
                                 // panic!("Unknown label: {}", label);
                                 Error::new(&format!("Unknown label: {}", label), pos.clone())
                                     .print();
-                                return;
+                                std::process::exit(1);
                             }
                         }
                     }
@@ -593,11 +634,11 @@ impl EvilStackVM {
                             pos.clone(),
                         )
                         .print();
-                        return;
+                        std::process::exit(1);
                     }
                 }
                 Instruction::Exit(ref pos) => {
-                    return;
+                    std::process::exit(1);
                 }
                 Instruction::Cmp(ref value, ref pos) => {
                     let a = self.stack.pop().unwrap();
@@ -636,7 +677,7 @@ impl EvilStackVM {
                         _ => {
                             // panic!("Type mismatch for CMP instruction");
                             Error::new("Type mismatch for CMP instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
 
@@ -646,7 +687,7 @@ impl EvilStackVM {
                     if self.stack.len() < 2 {
                         // panic!("Not enough operands for SCMP instruction");
                         Error::new("Not enough operands for SCMP instruction", pos.clone()).print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let a = self.stack.pop().unwrap();
@@ -686,7 +727,7 @@ impl EvilStackVM {
                         _ => {
                             // panic!("Type mismatch for SCMP instruction");
                             Error::new("Type mismatch for SCMP instruction", pos.clone()).print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
 
@@ -698,6 +739,18 @@ impl EvilStackVM {
                     let mut rng = rand::thread_rng();
                     let random_number = rng.gen_range(0.0..1.0);
                     self.stack.push(ConstType::Float(random_number));
+                }
+                Instruction::Time(ref pos) => {
+                    let time =
+                        match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
+                            Ok(time) => time.as_secs(),
+                            Err(_) => {
+                                // panic!("Failed to get time");
+                                Error::new("Failed to get time", pos.clone()).print();
+                                std::process::exit(1);
+                            }
+                        };
+                    self.stack.push(ConstType::Integer(time as i32));
                 }
                 _ => {
                     // panic!("Unimplemented instruction: {:?}", self.program[self.ip]);
@@ -731,7 +784,7 @@ impl EvilStackVM {
                             pos.clone(),
                         )
                         .print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     match symbol.value.as_str() {
@@ -741,6 +794,12 @@ impl EvilStackVM {
                         }
                         "pop" => {
                             self.program.push(Instruction::Pop(pos.clone()));
+                        }
+                        "dup" => {
+                            self.program.push(Instruction::Duplicate(pos.clone()));
+                        }
+                        "swap" => {
+                            self.program.push(Instruction::Swap(pos.clone()));
                         }
                         "add" => {
                             self.program.push(Instruction::Add(pos.clone()));
@@ -768,6 +827,15 @@ impl EvilStackVM {
                         }
                         "atoi" => {
                             self.program.push(Instruction::AToI(pos.clone()));
+                        }
+                        "itoa" => {
+                            self.program.push(Instruction::IToA(pos.clone()));
+                        }
+                        "itof" => {
+                            self.program.push(Instruction::IToF(pos.clone()));
+                        }
+                        "ftoi" => {
+                            self.program.push(Instruction::FToI(pos.clone()));
                         }
                         "jmp" => {
                             arg_required = true;
@@ -835,7 +903,7 @@ impl EvilStackVM {
                                 pos.clone(),
                             )
                             .print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -847,21 +915,24 @@ impl EvilStackVM {
                             pos.clone(),
                         )
                         .print();
-                        return;
+                        std::process::exit(1);
                     }
+
+                    let escape_parsed = self.parse_escaped_string(&symbol.value);
 
                     match arg_required_by.as_str() {
                         "push" => {
                             self.program.push(Instruction::Push(
-                                ConstType::String(symbol.value.clone()),
+                                ConstType::String(escape_parsed),
                                 pos.clone(),
                             ));
                             arg_required = false;
                         }
                         "cmp" => {
-                            let value = symbol.value.clone();
-                            self.program
-                                .push(Instruction::Cmp(ConstType::String(value), pos.clone()));
+                            self.program.push(Instruction::Cmp(
+                                ConstType::String(escape_parsed),
+                                pos.clone(),
+                            ));
                             arg_required = false;
                         }
                         _ => {
@@ -871,7 +942,7 @@ impl EvilStackVM {
                                 pos.clone(),
                             )
                             .print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -883,7 +954,7 @@ impl EvilStackVM {
                             pos.clone(),
                         )
                         .print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     match arg_required_by.as_str() {
@@ -906,7 +977,7 @@ impl EvilStackVM {
                                 pos.clone(),
                             )
                             .print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -918,7 +989,7 @@ impl EvilStackVM {
                             pos.clone(),
                         )
                         .print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     match arg_required_by.as_str() {
@@ -941,7 +1012,7 @@ impl EvilStackVM {
                                 pos.clone(),
                             )
                             .print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
@@ -953,7 +1024,7 @@ impl EvilStackVM {
                             pos.clone(),
                         )
                         .print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let label = &symbol.value[..symbol.value.len() - 1];
@@ -968,7 +1039,7 @@ impl EvilStackVM {
                             pos.clone(),
                         )
                         .print();
-                        return;
+                        std::process::exit(1);
                     }
 
                     let label = &symbol.value[1..];
@@ -1031,10 +1102,11 @@ impl EvilStackVM {
                                 pos.clone(),
                             )
                             .print();
-                            return;
+                            std::process::exit(1);
                         }
                     }
                 }
+                _ => {}
             }
         }
 
@@ -1045,7 +1117,7 @@ impl EvilStackVM {
                 "".to_string(),
             )
             .print();
-            return;
+            std::process::exit(1);
         }
     }
 
@@ -1055,5 +1127,38 @@ impl EvilStackVM {
                 self.labels.insert(label.clone(), i);
             }
         }
+    }
+
+    fn parse_escaped_string(&self, s: &str) -> String {
+        let mut result = String::new();
+        let mut escape = false;
+
+        for c in s.chars() {
+            if escape {
+                match c {
+                    'n' => {
+                        result.push('\n');
+                    }
+                    't' => {
+                        result.push('\t');
+                    }
+                    'r' => {
+                        result.push('\r');
+                    }
+                    _ => {
+                        result.push(c);
+                    }
+                }
+                escape = false;
+            } else {
+                if c == '\\' {
+                    escape = true;
+                } else {
+                    result.push(c);
+                }
+            }
+        }
+
+        result
     }
 }
